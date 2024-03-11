@@ -22,6 +22,17 @@ services:
     networks:
       - main-net
 
+  # migrations:
+  #   build: migrations
+  #   command: -connectRetries=20 migrate
+  #   environment:
+  #     FLYWAY_USER: 'postgres'
+  #     FLYWAY_MIXED: 'true'
+  #     FLYWAY_PASSWORD: 'postgres'
+  #     FLYWAY_URL: 'jdbc:postgresql://db:5432/postgres'
+  #   networks:
+  #     - main-net
+
 networks:
   main-net:
     driver: bridge

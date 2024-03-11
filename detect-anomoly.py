@@ -1,6 +1,6 @@
 from tqdm.notebook import tqdm
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select, text, Table, Column, Float, Integer, Date, MetaData
 import os
 import datetime
 
@@ -18,7 +18,7 @@ def summery(param, threshold):
     print("Good: " + str(good) + " | Bad: " + str(bad))
     print(f"Good Percentage: {(good / (good + bad) * 100).__round__(2)}%")
 
-# engine = create_engine('postgresql://username:password@localhost:5432/mydatabase')
+engine = create_engine('postgresql://postgres:postgres@localhost:5432/postgres')
 tqdm.pandas()
 
 if __name__ == '__main__':
@@ -34,6 +34,17 @@ if __name__ == '__main__':
     rq = summery("rsrq_score", 50)
     q = summery("quality_score", 50)
     print(df)
-    # df.to_sql('stats', con=engine, if_exists='append', index=False)
+    metadata_obj = MetaData()
+    user_table = Table("data_4g", metadata_obj, Column("rsrp0", Float()), Column("rsrq", Float()), Column("rsrp0_score", Float()), Column("rsrq_score", Float()), Column("quality_score", Float()))
+
+    df.to_sql('data_4g', con=engine, if_exists='append', index=False)
+
+    stmt = select(user_table)
+    print(stmt)
+
+    with engine.connect() as conn:
+        for row in conn.execute(stmt):
+            print(row)
+
 
     # os.system(f'mv dump.csv dump-x.csv')
