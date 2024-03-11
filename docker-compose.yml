@@ -14,13 +14,13 @@ services:
       # - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
     networks:
       - main-net
-  web:
-    build: web
-    restart: always
-    ports:
-      - 8000:8000
-    networks:
-      - main-net
+  # web:
+  #   build: web
+  #   restart: always
+  #   ports:
+  #     - 8000:8000
+  #   networks:
+  #     - main-net
 
   # migrations:
   #   build: migrations

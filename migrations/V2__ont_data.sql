@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS data_ont (
     rx FLOAT, 
     tx FLOAT, 
     ymd TIMESTAMP, 
-    rx_score FLOAT,
-    tx_score FLOAT,
-    anomoly BOOLEAN,
-    user VARCHAR(11)
+    rx_score INTEGER,
+    tx_score INTEGER,
+    anomoly INTEGER,
+    user TEXT
 );

@@ -1,6 +1,6 @@
 from tqdm.notebook import tqdm
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import VARCHAR, Boolean, Column, Float, Integer, MetaData, String, Table, create_engine, select
 import os
 import datetime
 
@@ -26,22 +26,17 @@ tqdm.pandas()
 
 if __name__ == "__main__":
 
-    df = pd.read_csv("dump.csv")
-    df = df[["rxpower_db", "txpower_db"]]
+    df = pd.read_csv("tmp.csv")
+    print(df.columns)
+    df = df[["rxpower_db", "txpower_db", "pppusername", "ymd"]]
 
-    df.rename(columns={"rxpower_db": "rx", "txpower_db": "tx"}, inplace=True)
+    df.rename(columns={"rxpower_db": "rx", "txpower_db": "tx", "pppusername": "telnum"}, inplace=True)
 
-    df["rx_score"] = df["rxpower_db"].apply(lambda x: rx_rule(float(x)) / 4.0 * 100)
-    df["tx_score"] = df["txpower_db"].apply(lambda x: tx_rule(float(x)) / 4.0 * 100)
-    df["quality_score"] = df["rx_score"].apply(lambda x: x * 0.70) + df[
-        "tx_score"
-    ].apply(lambda x: x * 0.30)
+    df["rx_score"] = df["rx"].apply(lambda x: rx_rule(float(x)))
+    df["tx_score"] = df["tx"].apply(lambda x: tx_rule(float(x)))
+    df["anomoly"] = df["rx_score"] + df["tx_score"]
 
-
-    rp = summery("rsrp0_score", 50)
-    rq = summery("rsrq_score", 50)
-    q = summery("quality_score", 50)
-    print(df)
+    print(df.columns)
 
     # id serial primary key,
     # rx FLOAT,
@@ -52,6 +47,16 @@ if __name__ == "__main__":
     # anomoly BOOLEAN,
     # user VARCHAR(11)
 
-    df.to_sql("stats", con=engine, if_exists="append", index=False)
+    metadata_obj = MetaData()
+    user_table = Table("data_ont_4", metadata_obj, Column("rx", Float()), Column("tx", Float()), Column("rx_score", Float()), Column("tx_score", Float()), Column("anomoly", Float()), Column("telnum", String(11)),  Column("ymd", String(8)))
+
+    df.to_sql("data_ont_4", con=engine, if_exists="append", index=False)
+
+    stmt = select(user_table)
+    print(stmt)
+
+    with engine.connect() as conn:
+        for row in conn.execute(stmt):
+            print(row)
 
     # os.system(f'mv dump.csv dump-x.csv')

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SQS</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="container">
+    <div class="row">
+      <div class="col d-flex justify-content-center">
+        <form action="/ont">
+          <div>
+            <div class="d-flex justify-content-center">
+              <h1 style="margin-top: 25px">Signal Quality Score</h1>
+              <h6 style="margin-top: 25px">For ONT</h6>
+            </div>
+            <div style="margin-top: 25px">
+              <div class="input-group flex-nowrap">
+                <span class="input-group-text" id="addon-wrapping"
+                  >Tel Number</span
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="################"
+                  aria-label="deviceId"
+                  name="user"
+                  value="{{user}}"
+                  aria-describedby="addon-wrapping"
+                />
+              </div>
+            </div>
+            <div class="d-flex justify-content-center" style="margin-top: 25px">
+              <input class="btn btn-success" value="Search" type="submit" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row" style="margin-top: 45px">
+      <div class="col d-flex justify-content-center">
+        {% if table_data is defined and table_data|length > 0 %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>rx</th>
+              <th>rx_score</th>
+              <th>tx</th>
+              <th>tx_score</th>
+              <th>yyyymmdd</th>
+              <th>Anomoly</th>
+            </tr>
+          </thead>
+          {% for d in table_data %}
+          <tr>
+            <td>{{loop.index}}</td>
+            <td>{{d.rx}}</td>
+            {% if d.rx_score == 0 %}
+            <td style="background-color: green">{{d.rx_score}}</td>
+            {% else %}
+            <td style="background-color: red">{{d.rx_score}}</td>
+            {% endif %}
+            <td>{{d.tx}}</td>
+            {% if d.tx_score == 0 %}
+            <td style="background-color: green">{{d.tx_score}}</td>
+            {% else %}
+            <td style="background-color: red">{{d.tx_score}}</td>
+            {% endif %}
+            <td>{{d.ymd}}</td>
+            {% if d.anomoly == 0 %}
+            <td style="background-color: green">{{d.anomoly}}</td>
+            {% else %}
+            <td style="background-color: red">{{d.anomoly}}</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <h3>No Data to Show. Please check the tel number.</h3>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"
+  ></script>
+</html>
